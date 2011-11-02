@@ -1,0 +1,150 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xml:lang="nl" elementFormDefault="qualified">
+	<xsd:annotation>
+		<xsd:appinfo>MixML</xsd:appinfo>
+		<xsd:documentation>The Schema for MiXML files v0.1</xsd:documentation>
+	</xsd:annotation>
+
+	<xsd:element name="mixml">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="mix">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="decks" type="MixMLDecks" />
+							<xsd:element name="transitions" type="MixMLTransitions" />
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="version" type="xsd:decimal" use="required" fixed="0.1" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="MixMLDecks">
+		<xsd:sequence>
+			<xsd:element name="deck" type="MixMLDeck" minOccurs="1" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="MixMLDeck">
+		<xsd:all>
+			<xsd:element name="initialState">
+				<xsd:complexType>
+					<xsd:all>
+						<xsd:element name="playing" type="xsd:boolean" />
+						<xsd:element name="pitch" type="xsd:integer" minOccurs="0" />
+						<xsd:element name="key" type="xsd:integer" minOccurs="0" />
+						<xsd:element name="volume" type="xsd:integer" minOccurs="0" />
+					</xsd:all>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="sha1" type="xsd:string" />
+			<xsd:element name="artist" type="xsd:string" />
+			<xsd:element name="title" type="xsd:string" />
+			<xsd:element name="length" type="time" />
+		</xsd:all>
+		<xsd:attribute name="name" type="xsd:string" use="required" />
+		<xsd:attribute name="grabAt" type="time" use="required" />
+		<xsd:attribute name="releaseAt" type="time" use="optional" />
+	</xsd:complexType>
+
+	<xsd:attributeGroup name="transitionattr">
+		<xsd:attribute name="ts" type="timestamp" use="required" />
+		<xsd:attribute name="deck" type="xsd:string" use="required" />
+	</xsd:attributeGroup>
+
+	<xsd:complexType name="MixMLTransitions">
+		<xsd:choice maxOccurs="unbounded">
+			<xsd:element name="volume" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="volumeValue">
+							<xsd:attributeGroup ref="transitionattr" />
+							<!-- XXX stretch tells the program to spread this mutation over an amount of time. A better name, anyone? -->
+							<xsd:attribute name="stretch" type="time" use="optional" />
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="equalizer" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="equalizerValue">
+							<xsd:attributeGroup ref="transitionattr" />
+							<xsd:attribute name="channel" use="required">
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<!-- XXX support for more extensive equalizers? -->
+										<xsd:enumeration value="low" />
+										<xsd:enumeration value="mid" />
+										<xsd:enumeration value="high" />
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:attribute>
+							<xsd:attribute name="stretch" type="time" use="optional" />
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="jump" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="time">
+							<xsd:attributeGroup ref="transitionattr" />
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="start" minOccurs="0" maxOccurs="unbounded" fixed="">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attributeGroup ref="transitionattr" />
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="stop" minOccurs="0" maxOccurs="unbounded" fixed="">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attributeGroup ref="transitionattr" />
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:choice>
+	</xsd:complexType>
+
+	<!-- Timestamps are absolute to the beginning of the mix -->
+	<xsd:simpleType name="timestamp">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- Times represent any time value -->
+	<xsd:simpleType name="time">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="volumeValue">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="equalizerValue">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="-32" />
+			<xsd:maxInclusive value="32" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

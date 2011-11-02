@@ -1,0 +1,37 @@
+<mixml version="0.1">
+	<mix>
+		<decks>
+			<deck name="A" grabAt="200000">
+				<initialState>
+					<playing>true</playing>
+				</initialState>
+				<sha1>425d1d302b974039da3b4b5560cafdd7467b8c4e</sha1>
+				<artist>Henk</artist>
+				<title>Ik ben Henk</title>
+				<length>234000</length>
+			</deck>
+
+			<deck name="B" grabAt="7000" releaseAt="14500">
+				<initialState>
+					<playing>false</playing>
+				</initialState>
+				<sha1>28c88ed2aa9e4a60852e84cc3b5f87136123d240</sha1>
+				<artist>Piet</artist>
+				<title>Ik ben Piet</title>
+				<length>137000</length>
+			</deck>
+		</decks>
+
+		<transitions>
+			<equalizer ts="0" deck="B" channel="low">-16</equalizer>
+			<equalizer ts="0" deck="A" channel="low" stretch="2500">-16</equalizer>
+			<start ts="2500" deck="B" />
+			<equalizer ts="2500" deck="B" channel="low" stretch="2500">0</equalizer>
+			<equalizer ts="5000" deck="A" channel="low" stretch="2500">-32</equalizer>
+			<volume ts="7500" deck="A" stretch="2500">0</volume>
+			<stop ts="10000" deck="A" />
+			<equalizer ts="12500" deck="B" channel="low">+16</equalizer>
+			<equalizer ts="14500" deck="B" channel="low">0</equalizer>
+		</transitions>
+	</mix>
+</mixml>
