@@ -29,7 +29,7 @@ class KeyboardInputDevice(InputDevice):
 
 	def Read(self):
 		rawbutton = self.readone()
-		return _keyboard_dict[rawbutton]
+		return (_keyboard_dict[rawbutton], 127)
 
 # Source: http://code.activestate.com/recipes/134892/
 class _GetchUnix:

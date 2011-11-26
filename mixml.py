@@ -31,7 +31,7 @@ def main():
 		action = input.Read()
 		print action
 		print i
-		if action[0] == 'quit':
+		if action[0][0] == 'quit':
 			break
 
 	if isinstance(input, MidiInputDevice):

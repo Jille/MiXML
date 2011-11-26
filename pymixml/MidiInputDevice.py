@@ -45,5 +45,5 @@ class MidiInputDevice(InputDevice):
 		assert MidiData
 		assert MidiData[3] == 0
 		button = _behringer_dict[MidiData[0]][MidiData[1]]
-		return (button[0], button[1], MidiData[2])
+		return (button, MidiData[2])
 
