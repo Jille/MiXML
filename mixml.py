@@ -28,8 +28,11 @@ def main():
 	i = 0;
 	while True:
 		i += 1
-		input.Read()
+		action = input.Read()
+		print action
 		print i
+		if action[0] == 'quit':
+			break
 
 	if isinstance(input, MidiInputDevice):
 		input.Terminate()
