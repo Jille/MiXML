@@ -25,6 +25,12 @@ def main():
         # NOTE: most Midi messages are 1-3 bytes, but the 4 byte is returned for use with SysEx messages.
 """
 
+	i = 0;
+	while True:
+		i += 1
+		input.Read()
+		print i
+
 	if isinstance(input, MidiInputDevice):
 		input.Terminate()
 
