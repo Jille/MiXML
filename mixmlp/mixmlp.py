@@ -87,4 +87,4 @@ except KeyboardInterrupt:
 res = pipeline.set_state(gst.STATE_NULL)
 if res != gst.STATE_CHANGE_SUCCESS:
 	print "Could not set pipeline %s to NULL" % pipeline
-	'exit(1)
+	exit(1)
