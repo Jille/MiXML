@@ -8,6 +8,7 @@
 from pymixml.InputDevice import *
 from pymixml.KeyboardInputDevice import *
 from pymixml.MidiInputDevice import *
+from pymixml.MidiOutputDevice import *
 import pypm
 import array
 import time
@@ -24,6 +25,7 @@ def main():
         print  MidiData[0][0][0]," ",MidiData[0][0][1]," ",MidiData[0][0][2], MidiData[0][0][3]
         # NOTE: most Midi messages are 1-3 bytes, but the 4 byte is returned for use with SysEx messages.
 """
+	output=outputType()
 
 	i = 0;
 	while True:
@@ -33,6 +35,8 @@ def main():
 		print i
 		if action[0][0] == 'quit':
 			break
+		if output:
+			output.Write(action[0], action[1])
 
 	if isinstance(input, MidiInputDevice):
 		input.Terminate()
@@ -51,6 +55,24 @@ Wat gaan we vandaag doen?
 			return inputMidiType()
 		elif x == 2:
 			return KeyboardInputDevice()
+
+def outputType():
+	choice=-1
+	while(choice<0) or (choice>2):
+		print """
+Wil je dat ik het ook nog ergens heensmijt?
+
+0) Nee"""
+		for loop in range(pypm.CountDevices()):
+			interf,name,inp,outp,opened = pypm.GetDeviceInfo(loop)
+			if outp == 1:
+				print ("%d) %s " % (loop, name)),
+				if (opened == 1): print "(opened)"
+				else: print "(unopened)"
+		answ = int(raw_input());
+		if answ == 0: return
+		MidiOut = pypm.Output(answ, 0);
+		return MidiOutputDevice(MidiOut);
 
 def PrintDevices():
 	for loop in range(pypm.CountDevices()):
