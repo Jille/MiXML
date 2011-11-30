@@ -25,7 +25,7 @@ class MiXMLNode:
 
 	@property
 	def fulltext(self):
-		return ''.join(self.text)
+		return ''.join(self.text).strip()
 
 class MiXMLFile:
 	def __init__(self):
@@ -68,8 +68,49 @@ class MiXMLFile:
 				pass
 			self.transitions.append(t)
 
+	def save(self, fname):
+		document = minidom.getDOMImplementation().createDocument(None, None, None)
+		mixml = document.createElement('mixml')
+		mixml.setAttribute("version", "0.1")
+		mix = document.createElement('mix')
+		decks = document.createElement('decks')
+		for d, di in self.decks.items():
+			deck = document.createElement('deck')
+			deck.setAttribute("name", d)
+			deck.setAttribute("grabAt", str(di['grabAt']))
+			self._createNodeWithValue(document, deck, 'sha1', di['sha1'])
+			self._createNodeWithValue(document, deck, 'artist', di['artist'])
+			self._createNodeWithValue(document, deck, 'title', di['title'])
+			self._createNodeWithValue(document, deck, 'length', str(di['length']))
+			initialState = document.createElement('initialState')
+			self._createNodeWithValue(document, initialState, 'playing', 'true' if di['initialState']['playing'] else 'false')
+			deck.appendChild(initialState)
+			decks.appendChild(deck)
+		mix.appendChild(decks)
+		transitions = document.createElement('transitions')
+		for t in self.transitions:
+			tr = document.createElement(t['type'])
+			del t['type']
+			if 'value' in t:
+				tr.appendChild(document.createTextNode(str(t['value'])))
+				del t['value']
+			for k, v in t.items():
+				tr.setAttribute(k, str(v))
+			transitions.appendChild(tr)
+		mix.appendChild(transitions)
+		mixml.appendChild(mix)
+		document.appendChild(mixml)
+		with open(fname, 'w') as fh:
+			fh.write(document.toprettyxml())
+
+	def _createNodeWithValue(self, document, parent, tag, value):
+		node = document.createElement(tag)
+		node.appendChild(document.createTextNode(value))
+		parent.appendChild(node)
+
 if __name__ == '__main__':
 	mf = MiXMLFile()
 	mf.load('../example.xml')
 	print mf.decks
 	print mf.transitions
+	mf.save('testout.xml')
