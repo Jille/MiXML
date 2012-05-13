@@ -51,7 +51,7 @@ class MiXMLFile:
 			print trNode.attributes
 			t = {}
 			t['type'] = trNode.nodeName
-			t['ts'] = trNode.attributes['ts']
+			t['ts'] = int(trNode.attributes['ts'])
 			t['deck'] = trNode.attributes['deck']
 			if trNode.nodeName == 'volume':
 				if 'stretch' in trNode.attributes:
@@ -63,6 +63,10 @@ class MiXMLFile:
 					t['stretch'] = trNode.attributes['stretch']
 				t['value'] = int(trNode.fulltext)
 			elif trNode.nodeName == 'jump':
+				t['value'] = int(trNode.fulltext)
+			elif trNode.nodeName == 'pitch':
+				t['value'] = float(trNode.fulltext)
+			elif trNode.nodeName == 'volume':
 				t['value'] = int(trNode.fulltext)
 			elif trNode.nodeName in ('start', 'stop'):
 				pass
