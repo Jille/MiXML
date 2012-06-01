@@ -79,6 +79,9 @@ for dname, deck in mf.decks.items():
 	decks[dname] = InputBin('filesrc')
 	decks[dname].src.set_property('location', deck['sha1'] +'.mp3')
 	if deck['initialState']['playing']:
+		if deck['grabAt'] != 0:
+			decks[dname].bin.seek_simple(gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_KEY_UNIT, deck['grabAt'] * 1000)
+			print "Jumped deck %s to %f" % (dname, deck['grabAt'] * 1000)
 		decks[dname].add_to_pipeline(pipeline, adder)
 		anyPlaying = True
 
