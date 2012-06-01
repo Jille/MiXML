@@ -30,15 +30,15 @@ class InputBin:
 
 		self.dec.connect('new-decoded-pad', self.__link_dec_conv)
 		self.src.link(self.dec)
-		self.conv.link(self.speed)
-		self.speed.link(self.eq)
+		self.speed.link(self.conv)
+		self.conv.link(self.eq)
 		self.eq.link(self.vol)
 
 		self.ghost_pad = gst.GhostPad('src', self.vol.get_pad('src'))
 		self.bin.add_pad(self.ghost_pad)
 
 	def __link_dec_conv(self, element, pad, last):
-		spad = self.conv.get_pad('sink')
+		spad = self.speed.get_pad('sink')
 		caps = pad.get_caps()
 		name = caps[0].get_name()
 		print '\n__link_dec_conv:', name
